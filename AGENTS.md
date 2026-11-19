@@ -188,3 +188,21 @@ Docs accompany every code change: update affected README and JSDoc contracts tog
 ## Vendoring policy
 
 `vendor/` packages are pinned source copies (manifest with upstream SHAs in [vendor/README.md](vendor/README.md)). Update via the sync procedure there; re-apply or retire the logged local modifications; rerun `pnpm run test && pnpm run build`.
+
+## Local (~/l)
+
+Build and run facts for this NixOS box (2026-11-19, v0.2.2-rc.5). Not upstream policy.
+
+- **Build:** `PATH=/run/current-system/sw/bin:$PATH pnpm run build`. `~/bin/cc` is a personal automation script that
+  shadows the C compiler, so the native addon build fails with `unknown flag: -std=c11` without the PATH prefix.
+- **Node:** use the official nodejs.org build at `~/.local/share/node/node-v24.14.1-linux-x64/bin`. Nix's node
+  24.14.1 is not recognized by `node-addon-require-builtin` ("x64 sysv getter is not a recognized this->field
+  accessor"), which breaks HMR and ~950 unit tests. nix-ld runs the official binary.
+- **Run:** `../Engine/scripts/chat-harness-web --no-open --host 127.0.0.1 --port 3080` (the Godot Chatfeed tab uses
+  it). It shares `~/.dsh` with the upstream install in `~/deepseek-harness` (0.2.1-rc.3).
+- **Unit tests:** with the two fixes above, `pnpm run test` gives 46 failures out of 60,244, all from this machine:
+  load timeouts under 24 workers (pass when rerun alone); global git LFS/xet filters, `America/New_York` TZ and shell
+  rc (pass with a clean `HOME`/`TZ`); empty `/tmp/.git` and `/tmp/.agents` dirs that make `/tmp` look like a project
+  root (pass with `TMPDIR` outside `/tmp`); no `sleep` in `/usr/bin:/bin` on NixOS (3 login-shell tests); nix-ld
+  `LD_LIBRARY_PATH` and the bubblewrap 0.11.1 denial label in 2 ptc-runtime tests (the write is still blocked);
+  untracked `website/CLAUDE.md` (doc-site layout gate).
