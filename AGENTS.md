@@ -190,6 +190,7 @@ Docs accompany every code change: update affected README and JSDoc contracts tog
 `vendor/` packages are pinned source copies (manifest with upstream SHAs in [vendor/README.md](vendor/README.md)). Update via the sync procedure there; re-apply or retire the logged local modifications; rerun `pnpm run test && pnpm run build`.
 
 ## Local (~/l)
+<!-- docs-guard: id=local-build covers=package.json,native/system/scripts/build.ts tree=534166eafb25b83e commit=867afadea8 -->
 
 Build and run facts for this NixOS box (2026-11-19, v0.2.2-rc.5). Not upstream policy.
 
